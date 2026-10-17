@@ -76,6 +76,7 @@ ShopFlow/
 │   └── init-databases.sql           # Creates all databases & users
 ├── pom.xml                          # Parent POM (multi-module)
 ├── README.md
+├── ARCHITECTURE_AND_BEST_PRACTICES.md # Service architecture & coding standards blueprint
 ├── api-gateway/
 │   ├── docker-compose.yml           # Service-level compose
 │   ├── Dockerfile
