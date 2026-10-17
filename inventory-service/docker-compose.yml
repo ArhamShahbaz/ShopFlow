@@ -1,0 +1,23 @@
+services:
+  inventory-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shopflow-inventory-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://shopflow-postgres:5432/shopflow_inventory
+      SPRING_DATASOURCE_USERNAME: inventory_user
+      SPRING_DATASOURCE_PASSWORD: inventory_pass
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: shopflow-kafka:9092
+    networks:
+      - shopflow-network
+    depends_on:
+      - shopflow-postgres
+      - shopflow-kafka
+
+networks:
+  shopflow-network:
+    external: true

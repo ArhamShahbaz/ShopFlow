@@ -1,0 +1,23 @@
+services:
+  order-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shopflow-order-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://shopflow-postgres:5432/shopflow_order
+      SPRING_DATASOURCE_USERNAME: order_user
+      SPRING_DATASOURCE_PASSWORD: order_pass
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: shopflow-kafka:9092
+    networks:
+      - shopflow-network
+    depends_on:
+      - shopflow-postgres
+      - shopflow-kafka
+
+networks:
+  shopflow-network:
+    external: true

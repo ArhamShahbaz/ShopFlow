@@ -8,9 +8,12 @@
   <packaging>pom</packaging>
 
   <name>ShopFlow</name>
+  <description>ShopFlow - Microservices E-Commerce Platform</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
   </properties>
 
   <modules>
@@ -21,5 +24,52 @@
     <module>order-service</module>
     <module>product-service</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>docker</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.5.0</version>
+            <executions>
+              <execution>
+                <id>docker-compose-up</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>compose</argument>
+                    <argument>up</argument>
+                    <argument>-d</argument>
+                    <argument>--build</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+              <execution>
+                <id>docker-compose-down</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>compose</argument>
+                    <argument>down</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

@@ -1,0 +1,23 @@
+services:
+  notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shopflow-notification-service
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://shopflow-postgres:5432/shopflow_notification
+      SPRING_DATASOURCE_USERNAME: notification_user
+      SPRING_DATASOURCE_PASSWORD: notification_pass
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: shopflow-kafka:9092
+    networks:
+      - shopflow-network
+    depends_on:
+      - shopflow-postgres
+      - shopflow-kafka
+
+networks:
+  shopflow-network:
+    external: true
