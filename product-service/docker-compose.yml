@@ -1,0 +1,23 @@
+services:
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shopflow-product-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://shopflow-postgres:5432/shopflow_product
+      SPRING_DATASOURCE_USERNAME: product_user
+      SPRING_DATASOURCE_PASSWORD: product_pass
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: shopflow-kafka:9092
+    networks:
+      - shopflow-network
+    depends_on:
+      - shopflow-postgres
+      - shopflow-kafka
+
+networks:
+  shopflow-network:
+    external: true
