@@ -25,7 +25,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Transactional
     public InventoryResponse setStock(SetStockRequest request) {
         log.info("Setting stock for SKU: {} with quantity: {}", request.getSkuCode(), request.getQuantity());
-/
+
         Inventory inventory = inventoryRepository.findBySkuCode(request.getSkuCode())
                 .map(existing -> {
                     log.debug("Found existing inventory record for SKU: {}, updating quantity from {} to {}",
