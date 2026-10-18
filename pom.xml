@@ -22,6 +22,7 @@
     <module>payment-service</module>
     <module>order-service</module>
     <module>product-service</module>
+    <module>service-registry</module>
   </modules>
 
   <profiles>
