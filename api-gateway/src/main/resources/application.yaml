@@ -2,6 +2,17 @@ spring:
   application:
     name: api-gateway
 
+  cloud:
+    gateway:
+      routes:
+        - id: PRODUCT-SERVICE
+          uri: http://localhost:8084
+          predicates:
+            - Path=/product-service/**
+
+
+
+
 server:
   port: 8080
 
