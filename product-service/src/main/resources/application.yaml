@@ -16,6 +16,26 @@ spring:
 
 
 
+  security:
+    oauth2:
+      client:
+        registration:
+          keyclock:
+            client-id: api-gateway
+            client-secret: 1G9eAv2oASbfHxMzpj073mf7cWQLSeHWVcdkKvhV867Z6qlwvuZSgXHkBaojEKwyglolKObb0zXauFd7Rr7GGs
+            scope:
+              - openid
+              - profile
+              - email
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/login/oauth2/code/keyclock
+        provider:
+          keyclock:
+            issuer-uri: http://localhost:8180/realms/shopflow
+            user-name-attribute: preferred_username
+
+
+
 #  kafka:
 #    bootstrap-servers: localhost:9092
 #    consumer:

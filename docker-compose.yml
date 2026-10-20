@@ -1,10 +1,10 @@
-include:
-  - path: ./api-gateway/docker-compose.yml
-  - path: ./inventory-service/docker-compose.yml
-  - path: ./notification-service/docker-compose.yml
-  - path: ./order-service/docker-compose.yml
-  - path: ./payment-service/docker-compose.yml
-  - path: ./product-service/docker-compose.yml
+#include:
+#  - path: ./api-gateway/docker-compose.yml
+#  - path: ./inventory-service/docker-compose.yml
+#  - path: ./notification-service/docker-compose.yml
+#  - path: ./order-service/docker-compose.yml
+#  - path: ./payment-service/docker-compose.yml
+#  - path: ./product-service/docker-compose.yml
 
 services:
   shopflow-postgres:
@@ -48,6 +48,60 @@ services:
       - "9092:9092"
     volumes:
       - shopflow-kafka-data:/var/lib/kafka/data
+    networks:
+      - shopflow-network
+    restart: unless-stopped
+
+  # ---------- One-shot helper: creates the "keycloak" database if missing ----------
+  # Runs once, creates the database (skips if it already exists), then exits.
+  # Works on a fresh setup AND on an existing Postgres volume.
+  shopflow-keycloak-db-init:
+    image: postgres:16
+    container_name: shopflow-keycloak-db-init
+    environment:
+      PGPASSWORD: shopflow123
+    command:
+      - sh
+      - -c
+      - >
+        psql -h shopflow-postgres -U shopflow -d shopflow -tAc
+        "SELECT 1 FROM pg_database WHERE datname='keycloak'" | grep -q 1
+        || psql -h shopflow-postgres -U shopflow -d shopflow -c "CREATE DATABASE keycloak"
+    depends_on:
+      shopflow-postgres:
+        condition: service_healthy
+    networks:
+      - shopflow-network
+    restart: "no"
+
+  # ---------- Keycloak: authentication / authorization server ----------
+  shopflow-keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1
+    container_name: shopflow-keycloak
+    # Development mode (plain HTTP). Not for production.
+    command: start-dev
+    environment:
+      # Use PostgreSQL instead of Keycloak's built-in H2 test database
+      KC_DB: postgres
+      # Enable /health endpoints
+      KC_HEALTH_ENABLED: "true"
+      # Database connection (reuses the existing shopflow-postgres, own database "keycloak")
+      KC_DB_URL: jdbc:postgresql://shopflow-postgres:5432/keycloak
+      KC_DB_USERNAME: shopflow
+      KC_DB_PASSWORD: shopflow123
+      # First admin account (only created on first startup)
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: 12345
+    ports:
+      # host:container -> open http://localhost:8180
+      # (8180 on the host so it doesn't clash with your API gateway on 8080)
+      - "8180:8080"
+    depends_on:
+      shopflow-postgres:
+        condition: service_healthy
+      # Wait until the database has been created
+      shopflow-keycloak-db-init:
+        condition: service_completed_successfully
     networks:
       - shopflow-network
     restart: unless-stopped

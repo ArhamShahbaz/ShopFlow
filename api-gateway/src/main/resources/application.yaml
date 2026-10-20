@@ -4,11 +4,55 @@ spring:
 
   cloud:
     gateway:
-      routes:
-        - id: PRODUCT-SERVICE
-          uri: http://localhost:8084
-          predicates:
-            - Path=/product-service/**
+      server:
+        webmvc:
+          routes:
+            - id: PRODUCT-SERVICE          # unique name, change to yours
+              uri: lb://product-service   # where to forward requests
+              predicates:
+                - Path=/product-service/** # which URLs use this route
+              filters:
+                - StripPrefix=1
+
+
+            - id: INVENTORY-SERVICE          # unique name, change to yours
+              uri: lb://inventory-service   # where to forward requests
+              predicates:
+                - Path=/inventory-service/** # which URLs use this route
+              filters:
+                - StripPrefix=1
+
+
+            - id: ORDER-SERVICE          # unique name, change to yours
+              uri: lb://order-service   # where to forward requests
+              predicates:
+                - Path=/order-service/** # which URLs use this route
+              filters:
+                - StripPrefix=1
+
+
+
+
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keyclock:
+            client-id: api-gateway
+            client-secret: 1G9eAv2oASbfHxMzpj073mf7cWQLSeHWVcdkKvhV867Z6qlwvuZSgXHkBaojEKwyglolKObb0zXauFd7Rr7GGs
+            scope:
+              - openid
+              - profile
+              - email
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/login/oauth2/code/keyclock
+        provider:
+          keyclock:
+            issuer-uri: http://localhost:8180/realms/shopflow
+            user-name-attribute: preferred_username
+
+
 
 
 
