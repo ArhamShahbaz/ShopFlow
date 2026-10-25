@@ -7,32 +7,26 @@ spring:
       server:
         webmvc:
           routes:
-            - id: PRODUCT-SERVICE          # unique name, change to yours
-              uri: lb://product-service   # where to forward requests
+            - id: PRODUCT-SERVICE
+              uri: lb://product-service
               predicates:
-                - Path=/product-service/** # which URLs use this route
+                - Path=/product-service/**
               filters:
                 - StripPrefix=1
 
-
-            - id: INVENTORY-SERVICE          # unique name, change to yours
-              uri: lb://inventory-service   # where to forward requests
+            - id: INVENTORY-SERVICE
+              uri: lb://inventory-service
               predicates:
-                - Path=/inventory-service/** # which URLs use this route
+                - Path=/inventory-service/**
               filters:
                 - StripPrefix=1
 
-
-            - id: ORDER-SERVICE          # unique name, change to yours
-              uri: lb://order-service   # where to forward requests
+            - id: ORDER-SERVICE
+              uri: lb://order-service
               predicates:
-                - Path=/order-service/** # which URLs use this route
+                - Path=/order-service/**
               filters:
                 - StripPrefix=1
-
-
-
-
 
   security:
     oauth2:
@@ -51,11 +45,6 @@ spring:
           keyclock:
             issuer-uri: http://localhost:8180/realms/shopflow
             user-name-attribute: preferred_username
-
-
-
-
-
 
 server:
   port: 8080

@@ -15,14 +15,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-
   security:
     oauth2:
       client:
         registration:
           keyclock:
             client-id: api-gateway
-            client-secret: 1G9eAv2oASbfHxMzpj073mf7cWQLSeHWVcdkKvhV867Z6qlwvuZSgXHkBaojEKwyglolKObb0zXauFd7Rr7GGs
+            client-secret: ${KEYCLOCK_CLIENT_SECRET_KEY}
             scope:
               - openid
               - profile
@@ -33,7 +32,6 @@ spring:
           keyclock:
             issuer-uri: http://localhost:8180/realms/shopflow
             user-name-attribute: preferred_username
-
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -46,10 +44,8 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
-
 server:
   port: 8081
-
 
 eureka:
   client:
