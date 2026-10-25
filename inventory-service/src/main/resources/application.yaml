@@ -22,7 +22,7 @@ spring:
         registration:
           keyclock:
             client-id: api-gateway
-            client-secret: 1G9eAv2oASbfHxMzpj073mf7cWQLSeHWVcdkKvhV867Z6qlwvuZSgXHkBaojEKwyglolKObb0zXauFd7Rr7GGs
+            client-secret: ${KEYCLOCK_CLIENT_SECRET_KEY}
             scope:
               - openid
               - profile

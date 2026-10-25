@@ -1,19 +1,26 @@
 package com.arham.api_gateway;
 
 
+
+import com.shopflow.jwt.KeycloakJwtAuthenticationConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
 
-    private static final String JWK_SET_URI =
-            "http://localhost:8180/realms/shopflow/protocol/openid-connect/certs";
+
+    private final KeycloakJwtAuthenticationConverter keycloakJwtConverter;
+
+    private final JwtDecoder jwtDecoder;
+
+    public SecurityConfig(KeycloakJwtAuthenticationConverter keycloakJwtConverter, JwtDecoder jwtDecoder) {
+        this.keycloakJwtConverter = keycloakJwtConverter;
+        this.jwtDecoder = jwtDecoder;
+    }
 
 
     @Bean
@@ -21,12 +28,14 @@ public class SecurityConfig {
 
         httpSecurity.authorizeHttpRequests(authorization ->
                         authorization
+                                .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/user", "/user/**").hasRole("USER")
                                 .anyRequest().authenticated())
 
                 .oauth2ResourceServer(
                         oauth ->
                                 oauth.jwt(
-                                        Customizer.withDefaults()
+                                        jwt -> jwt.jwtAuthenticationConverter(keycloakJwtConverter)
                                 )
                 );
 
@@ -35,9 +44,6 @@ public class SecurityConfig {
     }
 
 
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withJwkSetUri(JWK_SET_URI).build();
-    }
+
 
 }
