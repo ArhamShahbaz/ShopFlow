@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -126,5 +128,40 @@ public class ProductServiceImpl implements ProductService {
         }
         productRepository.deleteById(id);
         log.info("Product deleted successfully with ID: {}", id);
+    }
+
+
+    @Override
+    public ProductResponse getProductBySkuCode(String code) {
+        log.debug("Fetching product with skuCode: {}", code);
+        Product product = productRepository.findBySkuCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", code));
+        return productMapper.toResponse(product);
+    }
+
+    @Override
+    public List<ProductResponse> getProductsBySkuCode(List<String> codes) {
+        log.debug("Fetching products with skuCodes: {}", codes);
+
+        if (codes == null || codes.isEmpty()) {
+            return List.of();
+        }
+
+        List<Product> products = productRepository.findBySkuCodeIn(codes);
+
+        // Validate if any requested codes were not found
+        if (products.size() != codes.size()) {
+            Set<String> foundCodes = products.stream()
+                    .map(Product::getSkuCode)
+                    .collect(Collectors.toSet());
+
+            List<String> missingCodes = codes.stream()
+                    .filter(code -> !foundCodes.contains(code))
+                    .toList();
+
+            throw new ResourceNotFoundException("Products not found for skuCodes: " + missingCodes);
+        }
+
+        return productMapper.toResponseList(products);
     }
 }

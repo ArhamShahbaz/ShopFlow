@@ -1,6 +1,7 @@
 package com.arham.inventoryservice.service.impl;
 
 import com.arham.inventoryservice.dto.InventoryResponse;
+import com.arham.inventoryservice.dto.OrderResponse;
 import com.arham.inventoryservice.dto.SetStockRequest;
 import com.arham.inventoryservice.entity.Inventory;
 import com.arham.inventoryservice.exception.ResourceNotFoundException;
@@ -53,5 +54,13 @@ public class InventoryServiceImpl implements InventoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory", "skuCode", skuCode));
 
         return inventoryMapper.toResponse(inventory);
+    }
+
+    @Override
+    public void handleOrderCreated(OrderResponse response) {
+
+        System.out.println("response" + response.toString());
+
+
     }
 }

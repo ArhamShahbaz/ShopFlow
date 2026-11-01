@@ -1,6 +1,7 @@
 package com.arham.inventoryservice.service;
 
 import com.arham.inventoryservice.dto.InventoryResponse;
+import com.arham.inventoryservice.dto.OrderResponse;
 import com.arham.inventoryservice.dto.SetStockRequest;
 
 public interface InventoryService {
@@ -21,4 +22,6 @@ public interface InventoryService {
      * @return the current inventory state
      */
     InventoryResponse getStockBySkuCode(String skuCode);
+
+    void handleOrderCreated(OrderResponse response);
 }

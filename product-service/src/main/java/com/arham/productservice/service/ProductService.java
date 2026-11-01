@@ -24,4 +24,8 @@ public interface ProductService {
     ProductResponse updateProduct(Long id, ProductRequest request);
 
     void deleteProduct(Long id);
+
+    ProductResponse getProductBySkuCode(String code);
+
+    List<ProductResponse> getProductsBySkuCode(List<String> code);
 }

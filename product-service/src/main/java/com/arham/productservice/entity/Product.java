@@ -33,7 +33,6 @@ public class Product {
     @Column(name = "sku_code", nullable = false, unique = true)
     private String skuCode;
 
-    //     the minium price would bo 0.01 and maximum would be 999,999,999,999.99
     @Column(name = "price", nullable = false, precision = 14, scale = 2)
     private BigDecimal price;
 

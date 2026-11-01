@@ -1,2 +1,2 @@
-com.shopflow.autoconfigration.SharedSecurityWebAutoConfiguration
 com.shopflow.autoconfigration.SharedSecurityAutoConfiguration
+com.shopflow.autoconfigration.FeignTokenRelayInterceptor

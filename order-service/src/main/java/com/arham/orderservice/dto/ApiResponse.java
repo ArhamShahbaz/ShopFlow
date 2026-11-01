@@ -43,16 +43,5 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static <T> ApiResponse<T> error(String message, Map<String, String> errors) {
-        return ApiResponse.<T>builder()
-                .success(false)
-                .message(message)
-                .errors(errors)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
 
-    public static <T> ApiResponse<T> error(String message) {
-        return error(message, null);
-    }
 }

@@ -39,10 +39,12 @@ spring:
       group-id: order-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
 
 server:
   port: 8081
@@ -53,3 +55,50 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8762/eureka/
+
+
+#  resilience4j
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+
+              # =====================================================================
+              # 1. CLOSED STATE PROPERTIES (Normal operation)
+              # =====================================================================
+              # Type of sliding window used to record outcomes (COUNT_BASED or TIME_BASED)
+              slidingWindowType: COUNT_BASED
+              # Number of calls recorded in the closed state window
+              slidingWindowSize: 8
+              # Min calls needed within the window before evaluating thresholds
+              minimumNumberOfCalls: 6
+              # % of failed calls that will trigger transition from CLOSED to OPEN
+              failureRateThreshold: 60
+              # Duration threshold above which a call is considered slow
+              slowCallDurationThreshold: 10ms
+              # % of slow calls that will trigger transition from CLOSED to OPEN
+              slowCallRateThreshold: 75
+
+              # =====================================================================
+              # 2. OPEN STATE PROPERTIES (Short-circuiting state)
+              # =====================================================================
+              # Time the circuit stays OPEN before moving to HALF_OPEN
+              waitDurationInOpenState: 10s
+              # Automatically flips to HALF_OPEN after wait duration without needing a new call
+              automaticTransitionFromOpenToHalfOpenEnabled: true
+
+              # =====================================================================
+              # 3. HALF_OPEN STATE PROPERTIES (Testing state)
+              # =====================================================================
+              # Number of permitted trial calls allowed to evaluate health
+              permittedNumberOfCallsInHalfOpenState: 5
+              # Maximum time allowed to wait for trial calls in HALF_OPEN before forced back to OPEN
+              maxWaitDurationInHalfOpenState: 0s
+              ignoreExceptions:
+                - com.arham.orderservice.exception.ResourceNotFoundException
+
+    instances:
+      productServiceCircuitBreaker:
+        baseConfig: default
+
+

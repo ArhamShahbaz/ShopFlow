@@ -64,6 +64,41 @@ public class ProductController {
     }
 
     /**
+     * Fetch a product by skuCode
+     * GET /api/v1/products/sku/{code}
+     */
+    @GetMapping("/sku/{code}")
+    public ResponseEntity<ApiResponse<ProductResponse>> getProductBySkuCode(@PathVariable String code) {
+        log.info("REST request to get product by skuCode: {}", code);
+        ProductResponse response = productService.getProductBySkuCode(code);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    /**
+     * Fetch products by list of skuCodes (batch query via query parameter)
+     * GET /api/v1/products/sku/batch?code=xyz or GET /api/v1/products/sku?code=xyz
+     */
+    @GetMapping({"/sku/batch", "/sku"})
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getProductsBySkuCode(
+            @RequestParam("code") List<String> code) {
+        log.info("REST request to get products by skuCodes: {}", code);
+        List<ProductResponse> response = productService.getProductsBySkuCode(code);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    /**
+     * Fetch products by list of skuCodes via path variable
+     * GET /api/v1/products/sku/batch/{code}
+     */
+    @GetMapping("/sku/batch/{code}")
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getProductsBySkuCodePath(
+            @PathVariable List<String> code) {
+        log.info("REST request to get products by path skuCodes: {}", code);
+        List<ProductResponse> response = productService.getProductsBySkuCode(code);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    /**
      * Fetch products by name (search query)
      * GET /api/v1/products/search?name=xyz&page=0&size=10
      */
